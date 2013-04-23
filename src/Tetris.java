@@ -7,11 +7,12 @@ public class Tetris
 	// Constant fields
 	
 	// Offset of 7 to make the grid fit
-	public static final int WINDOW_WIDTH = 327;
+	public static final int WINDOW_WIDTH = (10 * 32) +157;
 	// Offset of 29 to make the grid fit
-	public static final int WINDOW_HEIGHT = 669;
+	public static final int WINDOW_HEIGHT = (20 * 32) + 29;
 	public static final int SCREEN_WIDTH = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
 	public static final int SCREEN_HEIGHT = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+	// Add states
 	
 	// Declaration for our graphics class
 	public static Board graphics = new Board();
