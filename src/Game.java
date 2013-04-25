@@ -1,5 +1,5 @@
 import java.awt.event.*;
-import java.awt.*;
+import java.util.Random;
 
 public class Game implements KeyListener
 {
@@ -20,6 +20,7 @@ public class Game implements KeyListener
 	private Tile[][] currentPiece;
 	private Tile[][] nextPiece;
 	private int state;
+	Random generator;
 	
 	public Game()
 	{
@@ -30,6 +31,7 @@ public class Game implements KeyListener
 		nextPiece = generatePiece();
 		//insert(nextPiece, 7, 7);
 		state = PLACEMENT;
+		generator = new Random();
 		
 		for (int i = 0; i < grid.length; i++)
 			for (int j = 0; j < grid[i].length; j++)
@@ -81,7 +83,10 @@ public class Game implements KeyListener
 		{
 			int X = piece[0][0].getX() + direction;
 			if (X < 0 || X + piece.length > GRID_WIDTH)
+			{
+				//System.out.println(X + " " + );
 				return false;
+			}
 			
 			boolean collision = collision(new Piece().changeX(piece, direction));
 			new Piece().changeX(piece, -direction);
@@ -119,9 +124,12 @@ public class Game implements KeyListener
 			//System.out.println(i + "  " + piece[0][0].getY());
 			for (int j = 0; (j + origin.getY()) < grid[i].length && j < piece[i].length; j++)
 			{
-				if (grid[i + origin.getX()][j + origin.getY()] != null && grid[i + origin.getX()][j + origin.getY()].getActive())
+				if ((grid[i + origin.getX()][j + origin.getY()] != null))
 				{
+					if (grid[i + origin.getX()][j + origin.getY()].getActive() && piece[i][j].getActive())
+					{
 					return true;
+					}
 				}
 			}
 		}
@@ -132,7 +140,7 @@ public class Game implements KeyListener
 	// Randomly generate a piece
 	private Tile[][] generatePiece()
 	{
-		Tile[][] piece = new Piece().generateLBlock();
+		Tile[][] piece = new Piece().generateRandomBlock();
 		
 		return piece;
 	}
@@ -142,7 +150,7 @@ public class Game implements KeyListener
 		for (int i = 0; i < grid.length && i < piece.length; i++)
 			for (int j = 0; j < grid[i].length && j < piece[i].length; j++)
 			{		
-				if (piece[i][j] != null)
+				if (piece[i][j] != null && piece[i][j].getActive())
 					grid[i + X][j + Y] = piece[i][j];
 				
 			}
@@ -173,10 +181,13 @@ public class Game implements KeyListener
 		{
 			for (int j = 0; j < grid[i].length; j++)
 				{
-				System.out.print(grid[i][j] + " ");
+				if (grid[i][j] != null)
+				System.out.print(grid[i][j].getActive() + " " + i + " " + j);
 				}
 			System.out.println();
 		}
+		System.out.println();
+		System.out.println();
 	}
 	// Check if there are any complete lines and delete them if so
 	private void clearRows()

@@ -39,7 +39,7 @@ public class Board extends JPanel implements ActionListener
 		for (int i = 0; grid != null && i < grid.length; i++)
 			for (int j = 0; j < grid[i].length; j++)
 			{
-				if (grid[i][j] != null)
+				if (grid[i][j] != null && grid[i][j].getActive())
 				{
 					Tile current = grid[i][j];
 					g.setColor(current.getColor());
