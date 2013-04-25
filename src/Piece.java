@@ -10,7 +10,7 @@ public class Piece
 		for (int i = 0; i < piece.length; i++)
 			for (int j = 0; j < piece[i].length; j++)
 			{
-				if (piece[i][j] != null && piece[i][j].getActive())
+				if (piece[i][j] != null) // && piece[i][j].getActive()
 					piece[i][j].setX(piece[i][j].getX() + offset);
 			}
 		return piece;
@@ -21,7 +21,7 @@ public class Piece
 		for (int i = 0; piece != null && i < piece.length; i++)
 			for (int j = 0; j < piece[i].length; j++)
 			{
-				if (piece[i][j] != null && piece[i][j].getActive())
+				if (piece[i][j] != null) //&& piece[i][j].getActive()
 					piece[i][j].setY(piece[i][j].getY() + offset);
 			}
 		return piece;

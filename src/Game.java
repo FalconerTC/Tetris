@@ -30,6 +30,11 @@ public class Game implements KeyListener
 		nextPiece = generatePiece();
 		//insert(nextPiece, 7, 7);
 		state = PLACEMENT;
+		
+		for (int i = 0; i < grid.length; i++)
+			for (int j = 0; j < grid[i].length; j++)
+				grid[i][j] = null;
+		//printGrid();
 		//insert(currentPiece, 0, 0);
 	}
 	// Handles button events
@@ -78,13 +83,27 @@ public class Game implements KeyListener
 			if (X < 0 || X + piece.length > GRID_WIDTH)
 				return false;
 			
+			boolean collision = collision(new Piece().changeX(piece, direction));
+			new Piece().changeX(piece, -direction);
+			if (collision)
+			{
+				return false;
+			}
+			
 		}
 		if (direction == UP || direction == DOWN)
 		{
 			int Y = piece[0][0].getY() + (direction / 10);
 			if (Y < 0 || Y + piece[0].length > GRID_HEIGHT)
 				return false;
-			if (collision(new Piece().changeX(piece, (direction / 10))));
+			
+			boolean collision = collision(new Piece().changeY(piece, (direction / 10)));
+			new Piece().changeY(piece, -(direction / 10));
+			if (collision)
+			{
+				return false;
+			}
+			
 		}
 		
 		return true;
@@ -92,11 +111,15 @@ public class Game implements KeyListener
 	// Detects if a piece exists within another piece
 	private boolean collision(Tile[][] piece)
 	{
-		for (int i = piece[0][0].getX(); i < grid.length && i < (piece.length + piece[0][0].getX()); i++)
+		if (piece == null)
+			return false;
+		Tile origin = piece[0][0];
+		for (int i = 0; (i + origin.getX()) < grid.length && i < piece.length; i++)
 		{
-			for (int j = piece[0][0].getY(); j < grid[i].length && j < (piece[i].length + piece[0][0].getY()); j++)
+			//System.out.println(i + "  " + piece[0][0].getY());
+			for (int j = 0; (j + origin.getY()) < grid[i].length && j < piece[i].length; j++)
 			{
-				if (grid[i][j] != null && grid[i][j].getActive())
+				if (grid[i + origin.getX()][j + origin.getY()] != null && grid[i + origin.getX()][j + origin.getY()].getActive())
 				{
 					return true;
 				}
@@ -120,7 +143,7 @@ public class Game implements KeyListener
 			for (int j = 0; j < grid[i].length && j < piece[i].length; j++)
 			{		
 				if (piece[i][j] != null)
-					grid[i + X][j + X] = piece[i][j];
+					grid[i + X][j + Y] = piece[i][j];
 				
 			}
 	}
@@ -132,24 +155,48 @@ public class Game implements KeyListener
 	private void transition()
 	{
 		state = TRANSITION;
-		System.out.println("HIT");
 		//
 		// Insert the piece into the grid
+		
 		insert(currentPiece);
-		
-		
+		clearRows();
+		reAllign();
+		//printGrid();
 		currentPiece = nextPiece;
 		nextPiece = generatePiece();
 		state = PLACEMENT;
 	}
 	
+	public void printGrid()
+	{
+		for (int i = 0; i < grid.length; i++)
+		{
+			for (int j = 0; j < grid[i].length; j++)
+				{
+				System.out.print(grid[i][j] + " ");
+				}
+			System.out.println();
+		}
+	}
+	// Check if there are any complete lines and delete them if so
+	private void clearRows()
+	{
+		
+	}
+	// Move all pieces down as much as possible
+	private void reAllign()
+	{
+		
+	}
 	// Moves the current piece down one
 	public void moveCurrentPieceDown()
 	{
 		if (canMove(currentPiece, DOWN))
 			currentPiece = new Piece().changeY(currentPiece, 1);
 		else
+		{
 			transition();
+		}
 	}
 	
 	public Tile[][] getGrid() { return grid; }
