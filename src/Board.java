@@ -5,15 +5,18 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener
 {
+	public static final int TIMER_VALUE = 100;
 	javax.swing.Timer timer;
+	double time;
 	Game game;
 	
 	public Board()
 	{
 		super();
 		game = new Game();
-		timer = new Timer(100, this);
+		timer = new Timer(TIMER_VALUE, this);
 		timer.start();
+		time = 0;
 		// Add game to control keyboard
 		this.addKeyListener(game);
 		setFocusable(true);
@@ -33,7 +36,7 @@ public class Board extends JPanel implements ActionListener
 	// Draws the current grid
 	private void drawGrid(Graphics g, Tile[][] grid)
 	{
-		for (int i = 0; i < grid.length; i++)
+		for (int i = 0; grid != null && i < grid.length; i++)
 			for (int j = 0; j < grid[i].length; j++)
 			{
 				if (grid[i][j] != null)
@@ -64,6 +67,13 @@ public class Board extends JPanel implements ActionListener
 	// Called everytime the timer ticks
 	public void actionPerformed(ActionEvent e) 
 	{
+		time++;
+		// Once a second, if we are placing a peice, move it down
+		if (time % 10 == 0 && game.getState() == game.PLACEMENT)
+		{
+			game.moveCurrentPieceDown();
+			
+		}
 		repaint();
 	}
 
