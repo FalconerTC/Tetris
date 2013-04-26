@@ -227,7 +227,7 @@ public class Game implements KeyListener
 					{
 						deletionMode = false;
 						check = false;
-						reAllign(j);
+						reAllign2(j);
 					}
 				}
 				// If we are in normal mode, check the row for any empty spot
@@ -273,7 +273,34 @@ public class Game implements KeyListener
 				
 			}
 		}
-		
+	}
+	private void reAllign2(int deletedRow)
+	{
+		Tile[][] newGrid = grid;
+		for (int j = GRID_HEIGHT - 1; j > -1; j--)
+		{
+			for (int i = 0; i < GRID_WIDTH; i++)
+			{
+				System.out.println(i + " " + j);
+				if (j > deletedRow && j < GRID_HEIGHT)
+				{
+						//newGrid[i][j] = grid[i][j];
+				}
+				else if (j > 0 && j < deletedRow)
+				{
+						//newGrid[i][j] = grid[i][j-1];
+						newGrid[i][j].setColor(grid[i][j-1].getColor());
+						newGrid[i][j].setActive(grid[i][j-1].getActive());
+						newGrid[i][j].setY(j);
+				}
+				else if (j == 0)
+				{
+						newGrid[i][j].setColor(Color.white);
+						newGrid[i][j].setActive(false);
+				}
+			}
+		}
+		grid = newGrid;
 	}
 	// Moves the current piece down one
 	public void moveCurrentPieceDown()
