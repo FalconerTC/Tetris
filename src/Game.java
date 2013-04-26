@@ -1,5 +1,6 @@
 import java.awt.event.*;
 import java.util.Random;
+import java.awt.Color;
 
 public class Game implements KeyListener
 {
@@ -59,8 +60,8 @@ public class Game implements KeyListener
 			// Debugging only
 			if (key == KeyEvent.VK_UP)
 			{
-				if (canMove(currentPiece, UP))
-					currentPiece = new Piece().changeY(currentPiece, -1);
+				while(canMove(currentPiece, DOWN))
+					currentPiece = new Piece().changeY(currentPiece, 1);
 			}
 			if (key == KeyEvent.VK_DOWN)
 			{
@@ -84,7 +85,6 @@ public class Game implements KeyListener
 			int X = piece[0][0].getX() + direction;
 			if (X < 0 || X + piece.length > GRID_WIDTH)
 			{
-				//System.out.println(X + " " + );
 				return false;
 			}
 			
@@ -121,7 +121,6 @@ public class Game implements KeyListener
 		Tile origin = piece[0][0];
 		for (int i = 0; (i + origin.getX()) < grid.length && i < piece.length; i++)
 		{
-			//System.out.println(i + "  " + piece[0][0].getY());
 			for (int j = 0; (j + origin.getY()) < grid[i].length && j < piece[i].length; j++)
 			{
 				if ((grid[i + origin.getX()][j + origin.getY()] != null))
@@ -167,8 +166,9 @@ public class Game implements KeyListener
 		// Insert the piece into the grid
 		
 		insert(currentPiece);
-		clearRows();
-		reAllign();
+		int rowsCleared = clearRows();
+		if (rowsCleared > 0)
+			reAllign();
 		//printGrid();
 		currentPiece = nextPiece;
 		nextPiece = generatePiece();
@@ -189,14 +189,123 @@ public class Game implements KeyListener
 		System.out.println();
 		System.out.println();
 	}
-	// Check if there are any complete lines and delete them if so
-	private void clearRows()
+	// Check if there are any complete lines and delete them if so. Returns the number of rows deleted
+	private int clearRows()
 	{
+		boolean check = true; // Used to determine if the row is full
+		boolean deletionMode = false; 
+		int rowsCleared = 0;
+		// Navigate through the grid, starting with columns
+		for (int j= 0; j < GRID_HEIGHT; j++)
+		{
+			// Navigate through the current row
+			for (int i = 0; i < GRID_WIDTH; i++)
+			{
+				// If we are in deletion mode
+				if (deletionMode)
+				{
+					// Deactivate every tile in the row
+					if (grid[i][j] != null)
+					{
+						grid[i][j].setActive(false);
+						grid[i][j].setColor(Color.white);
+					}
+					// If this is the last tile, go back to normal mode
+					if (i + 1 == GRID_WIDTH)
+					{
+						deletionMode = false;
+						check = false;
+					}
+				}
+				// If we are in normal mode, check the row for any empty spot
+				else if (!deletionMode && (grid[i][j] == null || !grid[i][j].getActive()))
+				{
+					// If we found an empty spot, start checking the next row
+					check = false;
+					break;
+				}
+			}
+			// If we never found an empty spot in the row
+			if (check)
+			{
+				// Re-test the row, but this time use deletion mode
+				j--;
+				rowsCleared++;
+				deletionMode = true;
+			}
+			check = true;
+		}
+		return rowsCleared;
 		
 	}
 	// Move all pieces down as much as possible
 	private void reAllign()
 	{
+		
+		// Navigate through the columns
+		for (int i = 0; i < 1; i++)
+		{
+			// Navigate through the rows starting at the bottom
+			for (int j = GRID_HEIGHT - 1; j > -1; j--)
+			{
+				
+				if (grid[i][j] != null && grid[i][j].getActive())
+				{
+					int next = j;
+					int k = j;
+					for (; k < GRID_HEIGHT; k++)
+					{
+						if (grid[i][k] == null || !grid[i][k].getActive())
+						{
+							next = k;
+						}
+						else
+						{
+							//System.out.println((grid[i][k] == null) + "   " + grid[i][k].getActive());
+							break;
+						}
+					}
+					//grid[i][next] = grid[i][j];
+					System.out.println("J= " + j + " K= " + k);
+					grid[i][k].setColor(grid[i][j].getColor());
+					grid[i][k].setActive(true);
+					grid[i][k].setX(i);
+					grid[i][k].setY(next);
+					
+					grid[i][j].setColor(Color.white);
+					grid[i][j].setActive(false);
+					
+					
+					
+					
+					
+					
+					
+					/*
+					for (int k = j+1; k < GRID_HEIGHT; k++)
+					{
+						if (grid[i][k] == null || !grid[i][k].getActive())
+						{
+							System.out.println(i + " " + j + " "  + " " + k + " " + (grid[i][j] == null));
+							
+							grid[i][k].setColor(grid[i][j].getColor());
+							grid[i][k].setActive(true);
+							grid[i][k].setX(i);
+							grid[i][k].setY(k);
+							
+							System.out.println("New piece is at " + i + " " + j);
+							grid[i][j].setColor(Color.white);
+							grid[i][j].setActive(false);
+							
+							//l++;
+							//break;
+						}
+						else
+							break;
+					}*/
+				}
+			}
+		}
 		
 	}
 	// Moves the current piece down one

@@ -11,7 +11,7 @@ public class Piece
                 for (int i = 0; i < piece.length; i++)
                         for (int j = 0; j < piece[i].length; j++)
                         {
-                                if (piece[i][j] != null && piece[i][j].getActive())
+                                if (piece[i][j] != null)
                                         piece[i][j].setX(piece[i][j].getX() + offset);
                         }
                 return piece;
@@ -22,7 +22,7 @@ public class Piece
                 for (int i = 0; piece != null && i < piece.length; i++)
                         for (int j = 0; j < piece[i].length; j++)
                         {
-                                if (piece[i][j] != null && piece[i][j].getActive())
+                                if (piece[i][j] != null)
                                         piece[i][j].setY(piece[i][j].getY() + offset);
                         }
                 return piece;
@@ -48,7 +48,7 @@ public class Piece
         }
         public Tile[][] generateSquare()
         {
-                Tile[][] piece = new Tile[2][2];
+                Tile[][] piece = new Tile[5][2];
                 for (int i = 0; i < piece.length; i++)
                         for (int j = 0; j < piece[i].length; j++)
                         {
@@ -179,24 +179,31 @@ public class Piece
         {
                 Tile[][] piece = new Tile[0][0];
                  Random generator = new Random();
-                int randomIndex = 4; //generator.nextInt(7);
-               
-                if(randomIndex==0)
-                         piece = generateLine();
-                if(randomIndex==1)
-                        piece = generateSquare();
-                if(randomIndex==2)
-                         piece = generateLBlock();
-                if(randomIndex==3)
-                         piece = generateZBlock();
-                if(randomIndex==4)
-                        piece = generateReverseZBlock();
-                if(randomIndex==5)
-                         piece = generateReverseLBlock();
-                if(randomIndex==6)
-                        piece = generateTBlock();
-               
-               
+                int randomIndex = 1; //generator.nextInt(7);
+               switch(randomIndex)
+               {
+	                case 0:
+	                         piece = generateLine();
+               				break;
+	                case 1:
+	                        piece = generateSquare();
+	                        break;
+	                case 2:
+	                         piece = generateLBlock();
+	                         break;
+	                case 3:
+	                         piece = generateZBlock();
+	                         break;
+	                case 4:
+	                        piece = generateReverseZBlock();
+	                        break;
+	                case 5:
+	                         piece = generateReverseLBlock();
+	                         break;
+	                case 6:
+	                        piece = generateTBlock();
+	                        break;
+               }
                 return piece;
         }
        
