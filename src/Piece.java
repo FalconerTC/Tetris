@@ -8,7 +8,7 @@ public class Piece
         // Change the X of every tile in piece by the offset amount
         public Tile[][]changeX(Tile[][] piece, int offset)
         {
-                for (int i = 0; i < piece.length; i++)
+                for (int i = 0; piece != null && i < piece.length; i++)
                         for (int j = 0; j < piece[i].length; j++)
                         {
                                 if (piece[i][j] != null)
@@ -48,7 +48,7 @@ public class Piece
         }
         public Tile[][] generateSquare()
         {
-                Tile[][] piece = new Tile[5][2];
+                Tile[][] piece = new Tile[2][2];
                 for (int i = 0; i < piece.length; i++)
                         for (int j = 0; j < piece[i].length; j++)
                         {
@@ -80,9 +80,6 @@ public class Piece
                                 	piece[i][j].setActive(false);
                                 }
                         }
-                //piece[0][0].setX(0);
-                //piece[0][0].setY(0);
-                //piece[0][0].setActive(false);
                 return piece;
         }
         public Tile[][] generateZBlock()
@@ -93,7 +90,7 @@ public class Piece
                         {
                                 if ((i == 0 && j==0) || (i==1) || (i==2 && j==1))
                                 {
-                                	piece[i][j] = new Tile(Color.GREEN);
+                                	piece[i][j] = new Tile(Color.RED);
                                 	piece[i][j].setX(i);
                                 	piece[i][j].setY(j);
                                 }
@@ -116,7 +113,7 @@ public class Piece
                         {
                                 if ((i == 0 && j==1) || (i==1) || (i==2 && j==0))
                                 {
-                                piece[i][j] = new Tile(Color.RED);
+                                piece[i][j] = new Tile(Color.GREEN);
                                 piece[i][j].setX(i);
                                 piece[i][j].setY(j);
                                 }
@@ -138,7 +135,7 @@ public class Piece
                         {
                                 if (i == 1 || (i == 0 && j == 2))
                                 {
-                                        piece[i][j] = new Tile(Color.PINK);
+                                        piece[i][j] = new Tile(Color.blue);
                                         piece[i][j].setX(i);
                                         piece[i][j].setY(j);
                                 }
@@ -177,9 +174,9 @@ public class Piece
         }
         public Tile[][] generateRandomBlock()
         {
-                Tile[][] piece = new Tile[0][0];
-                 Random generator = new Random();
-                int randomIndex = 1; //generator.nextInt(7);
+               	Tile[][] piece = new Tile[0][0];
+               	Random generator = new Random();
+               	int randomIndex = generator.nextInt(7);
                switch(randomIndex)
                {
 	                case 0:

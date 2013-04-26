@@ -13,6 +13,10 @@ public class Tile
 		this.color = color;
 		active = true;
 	}
+	public Tile()
+	{
+		
+	}
 	
 	// Location get-set methods
 	public Color getColor() { return color; }

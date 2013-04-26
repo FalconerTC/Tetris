@@ -1,0 +1,32 @@
+1. Some basic ideas got submitted; Pong, and Tic-Tac-Toe.  
+Eventually we decided those were boring and that something like  
+Tetris would be much cooler, so we eventually went with that
+
+2. We shut down Pong and Tic-Tac-Toe because we felt they were not 
+challenging enough. Incidentally, we almost shutdown Tetris  
+because it may have been too hard to do in a week, but we did it  
+anyway.
+
+3. Everything in the game built around a simple data type called  
+Tile, which contained an X and Y position, as well as a Boolean  
+Active and a Color. From there the game was designed around  
+matrices of tiles. Every new piece came in as a custom designed  
+tile matrix, and it would eventually be placed into the main Tile  
+matrix "grid" that held the game in its current state. We also  
+used a finite-state system, with states indicating block placement 
+or transition, which interacted mostly with the timer in the  
+graphics class, to keep from spawning new pieces while we're still 
+trying to clean up the board.
+
+4. Lack of planning proved to be catastrophic. We started by  
+creating the skeleton of the game, and it was nice to know  
+everything would work in theory. When we started doing the end  
+elements, like rotation and clearing lines, the space we had left  
+for them to function in proved to not be compatible with the game  
+in its current state. When making the method to move pieces down  
+after deleting them, it became apparent that Tetris rules required 
+pieces to maintain their structure after being places, and our  
+code was built off the idea that once in the grid all tiles lost  
+their previous form. After much deliberation, it was decided  
+unanimously to enact a policy of "Good enough" and leave the game  
+in its current state.

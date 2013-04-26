@@ -11,34 +11,41 @@ public class Game implements KeyListener
 	public static final int LEFT = -1;
 	public static final int DOWN = 10;
 	public static final int UP = -10;
-	public static final int LINES_TO_CLEAR = 50;
+	public static final int LINES_TO_CLEAR = 6;
 	public static final int PLACEMENT = 1;
 	public static final int TRANSITION = 2;
+	public static final int GAMEOVER_FAILURE = 9000;
+	public static final int GAMEOVER_VICTORY = 9001;
 	
 	// Private variables
 	private Tile[][] grid;
-	private int linesRemaining;
 	private Tile[][] currentPiece;
 	private Tile[][] nextPiece;
 	private int state;
+	private int linesToClear;
 	Random generator;
 	
 	public Game()
 	{
 		
 		grid = new Tile[GRID_WIDTH][GRID_HEIGHT];
-		linesRemaining = LINES_TO_CLEAR;
 		currentPiece = generatePiece();
+		for (int i = 0; i < 4; i++)
+			currentPiece = new Piece().changeX(currentPiece, 1);
 		nextPiece = generatePiece();
+		for (int i = 0; i < 4; i++)
+			nextPiece = new Piece().changeX(nextPiece, 1);
 		//insert(nextPiece, 7, 7);
 		state = PLACEMENT;
 		generator = new Random();
 		
 		for (int i = 0; i < grid.length; i++)
 			for (int j = 0; j < grid[i].length; j++)
-				grid[i][j] = null;
-		//printGrid();
-		//insert(currentPiece, 0, 0);
+			{
+				grid[i][j] = new Tile();
+				grid[i][j].setActive(false);
+			}
+		linesToClear = LINES_TO_CLEAR;
 	}
 	// Handles button events
 	private void move(KeyEvent e)
@@ -57,7 +64,7 @@ public class Game implements KeyListener
 				if (canMove(currentPiece, LEFT))
 					currentPiece = new Piece().changeX(currentPiece, -1);
 			}
-			// Debugging only
+			
 			if (key == KeyEvent.VK_UP)
 			{
 				while(canMove(currentPiece, DOWN))
@@ -70,6 +77,7 @@ public class Game implements KeyListener
 			}
 			if (key == KeyEvent.VK_SPACE)
 			{
+				// You may pause, but you may not unpause. Deal with it.
 				if (state == PLACEMENT)
 					state = TRANSITION;
 				else
@@ -162,17 +170,21 @@ public class Game implements KeyListener
 	private void transition()
 	{
 		state = TRANSITION;
-		//
-		// Insert the piece into the grid
-		
+		// Insert the piece into the grid		
 		insert(currentPiece);
 		int rowsCleared = clearRows();
-		if (rowsCleared > 0)
-			reAllign();
-		//printGrid();
+		linesToClear -= rowsCleared;
 		currentPiece = nextPiece;
 		nextPiece = generatePiece();
+		for (int i = 0; i < 4; i++)
+			nextPiece = new Piece().changeX(nextPiece, 1);
 		state = PLACEMENT;
+		
+		if (linesToClear <= 0)
+		{
+			state = GAMEOVER_VICTORY;
+			System.out.println(state);
+		}
 	}
 	
 	public void printGrid()
@@ -215,6 +227,7 @@ public class Game implements KeyListener
 					{
 						deletionMode = false;
 						check = false;
+						reAllign(j);
 					}
 				}
 				// If we are in normal mode, check the row for any empty spot
@@ -239,71 +252,25 @@ public class Game implements KeyListener
 		
 	}
 	// Move all pieces down as much as possible
-	private void reAllign()
-	{
-		
+	private void reAllign(int deletedRow)
+	{		
 		// Navigate through the columns
-		for (int i = 0; i < 1; i++)
+		for (int i = 0; i < GRID_WIDTH; i++)
 		{
 			// Navigate through the rows starting at the bottom
-			for (int j = GRID_HEIGHT - 1; j > -1; j--)
+			for (int j = deletedRow - 1; j > -1; j--)
 			{
 				
-				if (grid[i][j] != null && grid[i][j].getActive())
+				if (grid[i][j] != null)
 				{
-					int next = j;
-					int k = j;
-					for (; k < GRID_HEIGHT; k++)
-					{
-						if (grid[i][k] == null || !grid[i][k].getActive())
-						{
-							next = k;
-						}
-						else
-						{
-							//System.out.println((grid[i][k] == null) + "   " + grid[i][k].getActive());
-							break;
-						}
-					}
-					//grid[i][next] = grid[i][j];
-					System.out.println("J= " + j + " K= " + k);
-					grid[i][k].setColor(grid[i][j].getColor());
-					grid[i][k].setActive(true);
-					grid[i][k].setX(i);
-					grid[i][k].setY(next);
 					
-					grid[i][j].setColor(Color.white);
+					grid[i][j+1].setColor(grid[i][j].getColor());
+					grid[i][j+1].setActive(grid[i][j].getActive());
+					grid[i][j+1].setY(j+1);
+					
 					grid[i][j].setActive(false);
-					
-					
-					
-					
-					
-					
-					
-					/*
-					for (int k = j+1; k < GRID_HEIGHT; k++)
-					{
-						if (grid[i][k] == null || !grid[i][k].getActive())
-						{
-							System.out.println(i + " " + j + " "  + " " + k + " " + (grid[i][j] == null));
-							
-							grid[i][k].setColor(grid[i][j].getColor());
-							grid[i][k].setActive(true);
-							grid[i][k].setX(i);
-							grid[i][k].setY(k);
-							
-							System.out.println("New piece is at " + i + " " + j);
-							grid[i][j].setColor(Color.white);
-							grid[i][j].setActive(false);
-							
-							//l++;
-							//break;
-						}
-						else
-							break;
-					}*/
 				}
+				
 			}
 		}
 		
@@ -315,13 +282,16 @@ public class Game implements KeyListener
 			currentPiece = new Piece().changeY(currentPiece, 1);
 		else
 		{
-			transition();
+			if (currentPiece[0][0].getY() <= 0)
+				state = GAMEOVER_FAILURE;
+			else
+				transition();
 		}
 	}
 	
 	public Tile[][] getGrid() { return grid; }
 	public int getState() { return state; }
-	public int getLinesRemaining(){ return linesRemaining; }
+	public int getLinesRemaining(){ return linesToClear; }
 	public Tile[][] getCurrentPiece() { return currentPiece; }
 	public Tile[][] getNextPiece() { return nextPiece; }
 
